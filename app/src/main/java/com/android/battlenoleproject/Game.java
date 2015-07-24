@@ -1,0 +1,233 @@
+package com.android.battlenoleproject;
+
+/**
+ * Created by srandall on 7/19/15.
+ */
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Game {
+
+    private List<Board> boards;
+    private int[][] destroyedShips;
+
+    private final static int BOARD_SIZE = 100;
+    private final static int SHIP_COUNT = 4;
+
+    private final static Integer WATER = 59;
+    private final static int FIRE_MISS = 61;
+    private final static int FIRE_HIT = 62;
+    private final static int FIRE_DESTROY_SHIP = 12;
+    private final static int FIRE_DESTROY_FLEET = 13;
+
+    private final static int PLAYER_PLAYER_NUMBER = 0;
+    private final static int ENEMY_PLAYER_NUMBER = 1;
+
+
+
+
+
+
+
+    public Game( Ship[] playerOneShips, Ship[] playerTwoShips) {
+
+        createBoards(playerOneShips, playerTwoShips);
+        this.destroyedShips = new int[2][4];
+
+
+
+    }
+
+    public Game (Game sentGame) {
+
+        Board  board0 = new Board(sentGame.getPlayerBoard(PLAYER_PLAYER_NUMBER));
+        Board  board1 = new Board(sentGame.getPlayerBoard(ENEMY_PLAYER_NUMBER));
+
+        this.boards = new ArrayList<Board>(2);
+        this.boards.add(board0);
+        this.boards.add(board1);
+
+        this.destroyedShips = new int[2][4];
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                destroyedShips[i][j] = sentGame.destroyedShips[i][j];
+            }
+        }
+
+    }
+
+/*
+    public void writeToParcel ( Parcel out, int flags) {
+        out.writeTypedList(boards);
+        out.write
+    }
+
+    public Game (Parcel in) {
+        this.boards = new ArrayList<Board>(2);
+        this.destroyedShips = new ArrayList<ArrayList<Integer>>(2);
+        in.readTypedList(boards, Board.CREATOR);
+        in.readList(destroyedShips, Integer.class.getClassLoader());
+    }
+
+    public int describeContents() {
+        return this.hashCode();
+    }
+
+
+    public static final Parcelable.Creator<Game> CREATOR =
+            new Parcelable.Creator<Game>() {
+                public Game createFromParcel(Parcel in) {
+                    return new Game(in);
+                }
+
+                public Game[] newArray(int size) {
+                    return new Game[size];
+                }
+            };
+
+*/
+    public boolean isGameOver() {
+        boolean gameOver = true;
+
+
+        return gameOver;
+    }
+
+    private void createBoards(Ship[] player1Ships, Ship[] player2Ships) {
+        Board  board0 = new Board();
+        Board  board1 = new Board();
+
+        int size = board0.getBoardSize();
+
+        Log.d("TEST", "BOARD0 SIZE IS " + size);
+
+
+        for (int i = 0; i < 100; ++i) {
+            board0.addElement(WATER);
+            board1.addElement(WATER);
+        }
+
+        for (int j = 0; j < SHIP_COUNT; ++j) {
+
+            ArrayList<Integer>  player1ShipCoordinates = new ArrayList<Integer>(player1Ships[j].getLength());
+            player1ShipCoordinates.addAll(player1Ships[j].getCoordinates());
+
+            ArrayList<Integer>  player2ShipCoordinates = new ArrayList<Integer>(player1Ships[j].getLength());
+            player2ShipCoordinates.addAll(player1Ships[j].getCoordinates());
+
+            for (int k = 0; k < player1Ships[j].getLength(); ++k )
+                board0.setElementAtBoardPosition(player1ShipCoordinates.get(k), j*10+k);
+
+            for (int k = 0; k < player2Ships[j].getLength(); ++k )
+                board1.setElementAtBoardPosition(player2ShipCoordinates.get(k), j*10+k);
+
+        }
+
+
+        this.boards = new ArrayList<Board>(2);
+        this.boards.add(board0);
+        this.boards.add(board1);
+
+    }
+
+    public Board getPlayerBoard(int playernumber) {
+
+        return this.boards.get(playernumber);
+
+    }
+/*
+    public ArrayList<Integer> getPlayerDestroyedShips(int playernumber) {
+        ArrayList<Integer>  newDestroyedShips = new ArrayList<Integer>(SHIP_COUNT);
+        newDestroyedShips.addAll(this.destroyedShips.get(playernumber));
+
+        return newDestroyedShips;
+    }
+
+*/
+    public void markBoardWithHit(int playerNumber, int position) {
+        this.boards.get(playerNumber).setElementAtBoardPosition(position, FIRE_HIT);
+    }
+
+    public void markBoardWithMiss(int playerNumber, int position) {
+        Log.d("TEST", "playerNumber SET TO " + playerNumber + "position SET  TO " + position);
+        this.boards.get(playerNumber).setElementAtBoardPosition(position, FIRE_MISS);  // 6 will mean a miss
+    }
+
+
+    public int processMove(int attackingPlayer, int position) {
+        int attackedPlayer = getOpposite(attackingPlayer);
+        int positionResult = FIRE_MISS;
+
+        // check if this is position on any of attackedPlayers ships
+
+
+        Board boardGrid = new Board(this.boards.get(attackedPlayer));
+
+        int positionContains = boardGrid.getElementAtBoardPosition(position);
+
+        if (positionContains < 50) {  // this is a hit
+            markBoardWithHit(attackedPlayer, position);  // 61 will mean a hit
+            positionResult = FIRE_HIT;
+
+            // check if this hit destroyed the ship
+/*
+            if (!boardGrid.boardContains(positionContains)) {
+                destroyedShips.get(attackedPlayer).add(positionContains);
+                positionResult = FIRE_DESTROY_SHIP;
+
+                if (!fleetStillAlive(attackedPlayer))
+                    positionResult = FIRE_DESTROY_FLEET;
+
+            }
+*/
+            // if it did destroy a ship, check and see if that was the end of the fleet
+
+        }
+
+        else { // it did not hit a ship, add board miss and return FIRE_MISS
+            markBoardWithMiss(attackedPlayer, position);
+            positionResult = FIRE_MISS;
+
+        }
+
+        return positionResult;
+    }
+
+
+    public static int getOpposite(int player) {
+        int returnPlayer = 0;
+        if (player == 0)
+            returnPlayer = 1;
+        else
+            returnPlayer = 0;
+
+        return returnPlayer;
+
+    }
+
+    public boolean fleetStillAlive(int playerNumber) {
+        boolean alive = true;
+
+        if (this.destroyedShips[playerNumber].length == SHIP_COUNT)
+            alive = false;
+
+        return alive;
+
+    }
+
+    public int getBoardCellValueByPlayer(int playerNumber, int position) {
+        return this.getPlayerBoard(playerNumber).getElementAtBoardPosition(position);
+    }
+
+
+
+
+
+}
