@@ -70,7 +70,8 @@ public class MainActivity extends Activity {
 
     // Start a new game
     private void startGame() {
-        setupIntent = new Intent(this, com.android.battlenoleproject.SetupActivity.class);
+        //setupIntent = new Intent(this, com.android.battlenoleproject.SetupActivity.class);
+        setupIntent = new Intent(this, ChooseGameActivity.class);
         startActivity(setupIntent);
     }
 

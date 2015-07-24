@@ -24,4 +24,5 @@
     <string name="title_activity_play_computer">PlayComputerActivity</string>
 
     <string name="make_move">Select a cell to Fire on!</string>
+    <string name="waiting_for_player">Waiting for player...</string>
 </resources>

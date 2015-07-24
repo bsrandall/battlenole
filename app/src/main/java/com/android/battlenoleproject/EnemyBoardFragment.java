@@ -50,9 +50,6 @@ public class EnemyBoardFragment extends Fragment {
     OnFragmentFireInteractionListener mHandler;
     private OnEnemyFragmentContinueInteractionListener mCallback;
 
-
-
-
     //private OnFragmentFireInteractionListener mListener;
 
     /**

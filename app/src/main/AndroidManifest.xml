@@ -29,6 +29,14 @@
         <activity
             android:name="com.android.battlenoleproject.MyShips"
             android:screenOrientation="portrait"/>
+		        <activity
+            android:name="com.android.battlenoleproject.ChooseGameActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.android.battlenoleproject.WaitingActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
