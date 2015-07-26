@@ -175,11 +175,9 @@ public class Game {
 
     public int processMove(int attackingPlayer, int position) {
 
-        if (position == FIRE_MISS || position == FIRE_HIT)
-            return FIRE_BAD_FIRE;
-
         int attackedPlayer = getOpposite(attackingPlayer);
         int positionResult = FIRE_MISS;
+
 
         // check if this is position on any of attackedPlayers ships
 
@@ -188,7 +186,8 @@ public class Game {
 
         int positionContains = boardGrid.getElementAtBoardPosition(position);
 
-
+        if (positionContains == FIRE_MISS || position == FIRE_HIT)
+            return FIRE_BAD_FIRE;
 
 
         if (positionContains < 50) {  // this is a hit

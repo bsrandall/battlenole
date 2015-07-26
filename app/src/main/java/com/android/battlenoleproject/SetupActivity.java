@@ -204,8 +204,12 @@ public class SetupActivity extends Activity {
 
         if (false){//playComputer == false) {
 
-            // look for connection via bluetooth
-            // must negotiate who is server and who is client
+            Intent intent = new Intent(this.getApplicationContext(), PlayComputerActivity.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArray("player1Ships", player1Ships);
+            intent.putExtras(bundle);
+            startActivity(intent);
 
         }
         else {   // play Computer is true. Create a random ship for computer.
