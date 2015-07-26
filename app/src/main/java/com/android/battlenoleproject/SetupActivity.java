@@ -21,7 +21,6 @@ import java.util.Random;
 public class SetupActivity extends Activity {
 
     protected static final int NO_FIELD_IS_AIMED = -1;
-    private static final Random r = new Random();
 
     protected ImageAdapter imageAdapter;
     protected GridView boardGrid;
@@ -232,6 +231,8 @@ public class SetupActivity extends Activity {
     }
 
     public void randomizeShips(Ship[] ships) {
+
+        Random r = new Random();
 
         for (int shipCount = 0; shipCount < ships.length; ++shipCount)
             ships[shipCount].clearCoordinates();

@@ -16,7 +16,7 @@ import java.util.List;
 public class Game {
 
     private List<Board> boards;
-    private int[][] destroyedShips;
+    private List<ArrayList<Integer>> destroyedShips;
 
     private final static int BOARD_SIZE = 100;
     private final static int SHIP_COUNT = 4;
@@ -24,24 +24,29 @@ public class Game {
     private final static Integer WATER = 59;
     private final static int FIRE_MISS = 61;
     private final static int FIRE_HIT = 62;
-    private final static int FIRE_DESTROY_SHIP = 12;
-    private final static int FIRE_DESTROY_FLEET = 13;
+    private final static int FIRE_DESTROY_SHIP = 71;
+    private final static int FIRE_DESTROY_FLEET = 72;
+    private final static int FIRE_BAD_FIRE = 73;
 
     private final static int PLAYER_PLAYER_NUMBER = 0;
     private final static int ENEMY_PLAYER_NUMBER = 1;
 
-
-
-
+    private final static int PLAYER_COUNT = 2;
 
 
 
     public Game( Ship[] playerOneShips, Ship[] playerTwoShips) {
 
         createBoards(playerOneShips, playerTwoShips);
-        this.destroyedShips = new int[2][4];
 
+        ArrayList<Integer> player1Destroyed = new ArrayList<>();
+        ArrayList<Integer> player2Destroyed = new ArrayList<>();
 
+        this.destroyedShips = new ArrayList<>();
+
+        this.destroyedShips = new ArrayList<ArrayList<Integer>>(PLAYER_COUNT);
+        this.destroyedShips.add(PLAYER_PLAYER_NUMBER, player1Destroyed);
+        this.destroyedShips.add(ENEMY_PLAYER_NUMBER, player2Destroyed);
 
     }
 
@@ -50,14 +55,19 @@ public class Game {
         Board  board0 = new Board(sentGame.getPlayerBoard(PLAYER_PLAYER_NUMBER));
         Board  board1 = new Board(sentGame.getPlayerBoard(ENEMY_PLAYER_NUMBER));
 
-        this.boards = new ArrayList<Board>(2);
+        this.boards = new ArrayList<Board>(PLAYER_COUNT);
         this.boards.add(board0);
         this.boards.add(board1);
 
-        this.destroyedShips = new int[2][4];
-        for (int i = 0; i < 2; ++i) {
-            for (int j = 0; j < 4; ++j) {
-                destroyedShips[i][j] = sentGame.destroyedShips[i][j];
+        this.destroyedShips = new ArrayList<ArrayList<Integer>>(PLAYER_COUNT);
+
+        for (int i = 0; i < PLAYER_COUNT; ++i) {
+
+            if (sentGame.destroyedShips.get(PLAYER_PLAYER_NUMBER).size() > 0) {
+                this.destroyedShips.add(i, sentGame.destroyedShips.get(PLAYER_PLAYER_NUMBER));
+            } else {
+                ArrayList<Integer> playerDestroyed = new ArrayList<>();
+                this.destroyedShips.add(i, playerDestroyed);
             }
         }
 
@@ -100,6 +110,8 @@ public class Game {
         return gameOver;
     }
 
+
+
     private void createBoards(Ship[] player1Ships, Ship[] player2Ships) {
         Board  board0 = new Board();
         Board  board1 = new Board();
@@ -109,7 +121,7 @@ public class Game {
         Log.d("TEST", "BOARD0 SIZE IS " + size);
 
 
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < BOARD_SIZE; ++i) {
             board0.addElement(WATER);
             board1.addElement(WATER);
         }
@@ -119,8 +131,8 @@ public class Game {
             ArrayList<Integer>  player1ShipCoordinates = new ArrayList<Integer>(player1Ships[j].getLength());
             player1ShipCoordinates.addAll(player1Ships[j].getCoordinates());
 
-            ArrayList<Integer>  player2ShipCoordinates = new ArrayList<Integer>(player1Ships[j].getLength());
-            player2ShipCoordinates.addAll(player1Ships[j].getCoordinates());
+            ArrayList<Integer>  player2ShipCoordinates = new ArrayList<Integer>(player2Ships[j].getLength());
+            player2ShipCoordinates.addAll(player2Ships[j].getCoordinates());
 
             for (int k = 0; k < player1Ships[j].getLength(); ++k )
                 board0.setElementAtBoardPosition(player1ShipCoordinates.get(k), j*10+k);
@@ -131,7 +143,7 @@ public class Game {
         }
 
 
-        this.boards = new ArrayList<Board>(2);
+        this.boards = new ArrayList<Board>(PLAYER_COUNT);
         this.boards.add(board0);
         this.boards.add(board1);
 
@@ -162,6 +174,10 @@ public class Game {
 
 
     public int processMove(int attackingPlayer, int position) {
+
+        if (position == FIRE_MISS || position == FIRE_HIT)
+            return FIRE_BAD_FIRE;
+
         int attackedPlayer = getOpposite(attackingPlayer);
         int positionResult = FIRE_MISS;
 
@@ -172,22 +188,28 @@ public class Game {
 
         int positionContains = boardGrid.getElementAtBoardPosition(position);
 
+
+
+
         if (positionContains < 50) {  // this is a hit
+
             markBoardWithHit(attackedPlayer, position);  // 61 will mean a hit
             positionResult = FIRE_HIT;
 
-            // check if this hit destroyed the ship
-/*
-            if (!boardGrid.boardContains(positionContains)) {
-                destroyedShips.get(attackedPlayer).add(positionContains);
+            boolean shipAlive = shipStillAlive(attackedPlayer, positionContains);
+
+            if (shipAlive == false) {
+                int shipNumber = positionContains/10;
+                this.destroyedShips.get(attackedPlayer).add(shipNumber);
                 positionResult = FIRE_DESTROY_SHIP;
 
-                if (!fleetStillAlive(attackedPlayer))
-                    positionResult = FIRE_DESTROY_FLEET;
+                // check the fleet
 
+                if (fleetStillAlive(attackedPlayer) == false) {
+                    positionResult = FIRE_DESTROY_FLEET;
+                }
             }
-*/
-            // if it did destroy a ship, check and see if that was the end of the fleet
+
 
         }
 
@@ -215,12 +237,39 @@ public class Game {
     public boolean fleetStillAlive(int playerNumber) {
         boolean alive = true;
 
-        if (this.destroyedShips[playerNumber].length == SHIP_COUNT)
+        if (this.destroyedShips.get(playerNumber).size() == SHIP_COUNT) {
             alive = false;
+            // perform a safety check before declaring dead
+
+            for (int i = 0; i < BOARD_SIZE; ++ i) {
+                if (boards.get(playerNumber).getElementAtBoardPosition(i) < 50)
+                    alive = true;
+            }
+
+        }
 
         return alive;
 
     }
+
+    public boolean shipStillAlive(int playerNumber, int positionNumber) {
+        int shipNumber = positionNumber/10;
+        int shipStartPosition = shipNumber * 10;
+        Log.d("TEST", "SHIP NUMBER from shipStillAlive() is " + shipNumber + "and shipStartPosition is " + shipStartPosition );
+        boolean alive = false;
+
+
+            for (int i = 0; i < Ship.getShipLength(shipNumber); ++i) {
+                if (boards.get(playerNumber).boardContains(shipStartPosition + i)) {
+                    Log.d("TEST", "SHIP POSITION from shipStillAlive() is " + shipStartPosition+i);
+                    alive = true;
+                }
+            }
+
+        return alive;
+
+    }
+
 
     public int getBoardCellValueByPlayer(int playerNumber, int position) {
         return this.getPlayerBoard(playerNumber).getElementAtBoardPosition(position);

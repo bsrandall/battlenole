@@ -18,6 +18,8 @@ public class Ship implements Parcelable {
     private static final String KEY_DIRECTION = "direction";
     private static final String KEY_COORDINATES = "coordinates";
 
+    private static final int SHIP_COUNT = 4;
+
 
     private int length;
     private int direction;  // we will use 0 = horizontal and 1 = vertical
@@ -98,6 +100,12 @@ public class Ship implements Parcelable {
 
     public int getStartPosition() {
         return this.coordinates.get(0);
+    }
+
+    public static int getShipLength(int shipNumber) {
+        int shipLength = 0;
+        shipLength = shipNumber + 2;
+        return shipLength;
     }
 
 

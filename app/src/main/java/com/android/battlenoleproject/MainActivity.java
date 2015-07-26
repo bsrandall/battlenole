@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
         mJoinGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                joinGame();
+                joinGame();
             }
         });
 
@@ -75,10 +75,10 @@ public class MainActivity extends Activity {
         startActivity(setupIntent);
     }
 
-    /*private void joinGame() {
+    private void joinGame() {
         Intent intent = new Intent(this, JoinGame.class);
         startActivity(intent);
-    }*/
+    }
 
     // Show game info like help and credits
     private void showInfo(int pageNumber) {

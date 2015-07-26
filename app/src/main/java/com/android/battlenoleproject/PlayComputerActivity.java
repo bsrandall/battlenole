@@ -38,6 +38,9 @@ public class PlayComputerActivity extends Activity
 
     private final static int FIRE_MISS = 61;
     private final static int FIRE_HIT = 62;
+    private final static int FIRE_DESTROY_SHIP = 71;
+    private final static int FIRE_DESTROY_FLEET = 72;
+    private final static int FIRE_BAD_FIRE = 73;
 
     private static final String BOARD_KEY = "board";
 
@@ -46,6 +49,8 @@ public class PlayComputerActivity extends Activity
     private static final Random r = new Random();
 
     protected int random;
+
+    private int lastEnemyHit;
 
     private TextView topTV;
 
@@ -58,7 +63,7 @@ public class PlayComputerActivity extends Activity
         Bundle bundle = getIntent().getExtras();
 
         Parcelable ps1[] = bundle.getParcelableArray("player1Ships");
-        Parcelable ps2[] = bundle.getParcelableArray("player1Ships");
+        Parcelable ps2[] = bundle.getParcelableArray("player2Ships");
 
         player1Ships = new Ship[ps1.length];
         computerShips = new Ship[ps2.length];
@@ -184,7 +189,7 @@ public class PlayComputerActivity extends Activity
                 while (game.getPlayerBoard(0).getElementAtBoardPosition(random) >= FIRE_MISS )  //  (don't select a cell that we have already hit
                     random = r.nextInt(99);
 
-                Handler handler = new Handler();
+                Handler handler = new Handler();       // delay here to show screen and then show fire position
                 handler.postDelayed(new Runnable() {
                     public void run() {
                             processEnemyFire(random);
@@ -192,13 +197,7 @@ public class PlayComputerActivity extends Activity
                     }
                 }, 2000);
 
-              //  processEnemyFire(random);
-                //myHandler.postDelayed(displayTurnResults, 10000);
-
-
             }
-
-
 
     }
 
@@ -208,29 +207,37 @@ public class PlayComputerActivity extends Activity
 
         int result = this.game.processMove(playerTurn, position);
 
+        if (result == FIRE_BAD_FIRE) {
+            topTV.setText("Cell already Selected. Please pick again");
+            playGame();
+        } else {
 
-        EnemyBoardFragment enemyBoardFragment = new EnemyBoardFragment();
+            EnemyBoardFragment enemyBoardFragment = new EnemyBoardFragment();
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Context context = getApplicationContext();
-        enemyBoardFragment =  (EnemyBoardFragment) fragmentManager.findFragmentByTag("enemyBoard");
-        enemyBoardFragment.fire(position, result);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Context context = getApplicationContext();
+            enemyBoardFragment = (EnemyBoardFragment) fragmentManager.findFragmentByTag("enemyBoard");
+            enemyBoardFragment.fire(position, result);
 
 
-
-        if (result != FIRE_HIT) { // it was a miss, switch turns
-            topTV.setText("Sorry, you missed. Switching to Enemy Turn.");
-            playerTurn = game.getOpposite(playerTurn);
-        }
-        else {
-            topTV.setText("You Hit the Enemy! Go Again.");
-            if (game.fleetStillAlive(playerTurn))
+            if (result == FIRE_MISS) { // it was a miss, switch turns
+                topTV.setText("Sorry, you missed. Switching to Enemy Turn.");
+                playerTurn = game.getOpposite(playerTurn);
+            } else if (result == FIRE_HIT) {
+                topTV.setText("You Hit the Enemy! Go Again.");
+            } else if (result == FIRE_DESTROY_SHIP) {
+                topTV.setText("You Destroyed an Enemy Ship! Go Again.");
+            } else if (result == FIRE_DESTROY_FLEET) {
+                topTV.setText("YOU WIN!!!!!!!!!");
                 processWinner(playerTurn);
+            } else if (result == FIRE_BAD_FIRE)
+                topTV.setText("Cell already Selected. Please pick again");
+
+
+            myHandler.postDelayed(changePlayers, 1000);
+
         }
-
-        myHandler.postDelayed(changePlayers, 1000);
-
     }
 
 
@@ -251,14 +258,19 @@ public class PlayComputerActivity extends Activity
 
 
 
-        if (result != FIRE_HIT) {// it was a miss, switch turns
-            topTV.setText("Enemy Missed. Switching Turns...");
+        if (result == FIRE_MISS) { // it was a miss, switch turns
+            topTV.setText("Sorry, you missed. Switching to Enemy Turn.");
             playerTurn = game.getOpposite(playerTurn);
         }
-        else {
-            topTV.setText("Oh no, You were Hit!");
-            if (game.fleetStillAlive(playerTurn))
-                processWinner(playerTurn);
+        else if (result == FIRE_HIT) {
+            topTV.setText("You Hit the Enemy! Go Again.");
+        }
+        else if (result == FIRE_DESTROY_SHIP) {
+            topTV.setText("Enemy Destroyed Your Ship! Go Again.");
+        }
+        else if (result == FIRE_DESTROY_FLEET) {
+            topTV.setText("ENEMY WINS!!!!!!!!!");
+            processWinner(playerTurn);
         }
 
 
@@ -270,6 +282,14 @@ public class PlayComputerActivity extends Activity
 
     public void processWinner(int playerNumber) {
 
+        Intent endGame = new Intent(this, EndGame.class);
+        Boolean won;
+        if (playerNumber == player1)
+            won = true;
+        else
+            won = false;
+        endGame.putExtra("my_winner", won);
+        startActivity(endGame);
     }
 
 
