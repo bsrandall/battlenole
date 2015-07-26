@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,9 +34,29 @@ public class WaitingRoom extends Activity {
     private ArrayAdapter<String> BTArrayAdapter;
     private static final int REQUEST_ENABLE_BT = 1;
 
+    private Ship[] player1Ships;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting);
+
+        Bundle bundle = getIntent().getExtras();
+
+        Parcelable ps1[] = bundle.getParcelableArray("player1Ships");
+      //  Parcelable ps2[] = bundle.getParcelableArray("player2Ships");
+
+        player1Ships = new Ship[ps1.length];
+       // computerShips = new Ship[ps2.length];
+
+        System.arraycopy(ps1, 0, player1Ships, 0, ps1.length);
+
+       // System.arraycopy(ps2, 0, computerShips, 0, ps1.length);
+
+        getIntent().removeExtra("player1Ships");
+      //  getIntent().removeExtra("player2Ships");
+
+
+
 
         back = (ImageButton) findViewById(R.id.btnBack);
         text = (TextView) findViewById(R.id.headerTextView);
@@ -48,8 +69,13 @@ public class WaitingRoom extends Activity {
             Toast.makeText(getApplicationContext(), "Your device does not support Bluetooth",
                     Toast.LENGTH_LONG).show();
         }
+/*
+        if (!myBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
 
-
+*/
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,9 +106,12 @@ public class WaitingRoom extends Activity {
         if (!myBluetoothAdapter.isEnabled()) {
             Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOnIntent, REQUEST_ENABLE_BT);
+
             Intent discoverableIntent = new
                     Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+
             startActivity(discoverableIntent);
 
             Toast.makeText(getApplicationContext(), "Bluetooth turned on",

@@ -31,6 +31,7 @@ public class ChooseGameActivity extends Activity {
                 Intent i=new Intent(v.getContext(), SetupActivity.class);
                 i.putExtra("playComputer", false);
                 startActivity(i);
+                finish();
             }
         });
 

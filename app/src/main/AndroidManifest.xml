@@ -34,9 +34,15 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name="com.android.battlenoleproject.WaitingActivity"
+            android:name="com.android.battlenoleproject.WaitingRoom"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.android.battlenoleproject.EndGame"
             android:screenOrientation="portrait"/>
 
     </application>
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
 </manifest>

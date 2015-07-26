@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:background="@android:color/black"
-              tools:context="com.android.battleship.SetupActivity">
+              tools:context="com.android.battleship.WaitingRoom">
 
     <!-- Header -->
 

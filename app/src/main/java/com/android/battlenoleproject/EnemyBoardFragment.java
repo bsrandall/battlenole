@@ -142,12 +142,12 @@ public class EnemyBoardFragment extends Fragment {
      */
     public interface OnFragmentFireInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentFireInteraction(int position);
+        void onFragmentFireInteraction(int position);
     }
 
     public interface OnEnemyFragmentContinueInteractionListener {
         // TODO: Update argument type and name
-        public void onEnemyFragmentContinueInteraction();
+        void onEnemyFragmentContinueInteraction();
     }
 
 
@@ -170,6 +170,7 @@ public class EnemyBoardFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 ImageView iv = (ImageView) v;
 
+                enemyBoardGrid.setEnabled(false);
                 mHandler.onFragmentFireInteraction(position);
 
 
@@ -187,6 +188,7 @@ public class EnemyBoardFragment extends Fragment {
 
         board.setElementAtBoardPosition(position, result);
         enemyImageAdapter.swapBoards(board);
+        enemyBoardGrid.setEnabled(false);
 
 
     }

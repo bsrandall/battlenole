@@ -41,14 +41,14 @@ public class SetupActivity extends Activity {
 
     private int clickedShipNumber, lastClickedShipNumber;
 
-    boolean playComputer = true;
+    private boolean playComputer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        playComputer = intent.getBooleanExtra("playComputer", true);
+        this.playComputer = intent.getBooleanExtra("playComputer", false);
 
         lastClickWasShip = false;
         clickedShipNumber = -1;
@@ -114,7 +114,7 @@ public class SetupActivity extends Activity {
 
                 //disable game start and re-enable rotate if necessary
                 buttonStart.setEnabled(false);
-                buttonRotate.setEnabled(false);
+                buttonRotate.setEnabled(true);
             }
         });
 
@@ -202,14 +202,15 @@ public class SetupActivity extends Activity {
 
     private void player1Ready() {
 
-        if (false){//playComputer == false) {
+        if (playComputer == false){//playComputer == false) {
 
-            Intent intent = new Intent(this.getApplicationContext(), PlayComputerActivity.class);
+            Intent intent = new Intent(this.getApplicationContext(), WaitingRoom.class);
 
             Bundle bundle = new Bundle();
             bundle.putParcelableArray("player1Ships", player1Ships);
             intent.putExtras(bundle);
             startActivity(intent);
+            finish();
 
         }
         else {   // play Computer is true. Create a random ship for computer.
@@ -252,7 +253,7 @@ public class SetupActivity extends Activity {
                     valid = true;
                     if (shipCount > 0) {
                         for (int i = shipCount - 1; i > 0; --i) {
-                            valid = shipNoConflicts(direction, randomStartPosition, ships[i].getLength(), ships[i].getCoordinates());
+                            valid = shipNoConflicts(direction, randomStartPosition, ships[shipCount].getLength(), ships[i].getCoordinates());  // 7-25 PM updates
                             if (valid == false)
                                 break;
                         }
@@ -289,7 +290,7 @@ public class SetupActivity extends Activity {
         boolean valid = true;
 // if direction is horizontal, have to check in loop for startPosition + checkedShipped length -1
         if (direction == 0) {
-            for (int i = startPosition; i < startPosition + length + 1; ++i) {
+            for (int i = startPosition; i < startPosition + length; ++i) {
                 if (coordinates.contains(i)) {  // horizontal
                     valid = false;
                     break;

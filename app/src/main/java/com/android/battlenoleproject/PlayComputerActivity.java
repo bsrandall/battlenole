@@ -181,7 +181,6 @@ public class PlayComputerActivity extends Activity
 
             if (playerTurn == 0) {                          // It is Player's turn show enemy board
                 displayArrangeGameScreen(playerTurn);
-                ;
             }
 
             else {                                        // It is enemy's turn show player's board
@@ -209,7 +208,7 @@ public class PlayComputerActivity extends Activity
 
         if (result == FIRE_BAD_FIRE) {
             topTV.setText("Cell already Selected. Please pick again");
-            playGame();
+            return;
         } else {
 
             EnemyBoardFragment enemyBoardFragment = new EnemyBoardFragment();
@@ -223,7 +222,7 @@ public class PlayComputerActivity extends Activity
 
             if (result == FIRE_MISS) { // it was a miss, switch turns
                 topTV.setText("Sorry, you missed. Switching to Enemy Turn.");
-                playerTurn = game.getOpposite(playerTurn);
+                playerTurn = Game.getOpposite(playerTurn);
             } else if (result == FIRE_HIT) {
                 topTV.setText("You Hit the Enemy! Go Again.");
             } else if (result == FIRE_DESTROY_SHIP) {
@@ -260,7 +259,7 @@ public class PlayComputerActivity extends Activity
 
         if (result == FIRE_MISS) { // it was a miss, switch turns
             topTV.setText("Sorry, you missed. Switching to Enemy Turn.");
-            playerTurn = game.getOpposite(playerTurn);
+            playerTurn = Game.getOpposite(playerTurn);
         }
         else if (result == FIRE_HIT) {
             topTV.setText("You Hit the Enemy! Go Again.");
@@ -284,10 +283,7 @@ public class PlayComputerActivity extends Activity
 
         Intent endGame = new Intent(this, EndGame.class);
         Boolean won;
-        if (playerNumber == player1)
-            won = true;
-        else
-            won = false;
+        won = playerNumber == player1;
         endGame.putExtra("my_winner", won);
         startActivity(endGame);
     }

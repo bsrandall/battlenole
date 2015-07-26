@@ -54,15 +54,15 @@ public class EnemyGridImageAdapter extends BaseAdapter {
     public EnemyGridImageAdapter(Context c, Board sentBoard, int player ) {
 
 
-        this.board = sentBoard;
-        this.playerNumber = player;
-        this.enemyNumber = Game.getOpposite(player);
+        board = sentBoard;
+        playerNumber = player;
+        enemyNumber = Game.getOpposite(player);
 
         mContext = c;
     }
 
     public void swapBoards(Board newBoard) {
-        this.board = newBoard;
+        board = newBoard;
         notifyDataSetChanged();
     }
 
@@ -139,6 +139,7 @@ public class EnemyGridImageAdapter extends BaseAdapter {
         return imageResource;
 
     }
+
 
 
 
