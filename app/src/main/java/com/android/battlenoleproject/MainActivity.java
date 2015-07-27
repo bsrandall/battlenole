@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
-    private Button mNewGame;
-    private Button mJoinGame;
+    private Button mComputerGame;
+    private Button mHumanGame;
     private Button mHelp;
     private Button mCredits;
     private Button mExit;
@@ -22,25 +22,26 @@ public class MainActivity extends Activity {
         // Stop annoying default activity transition
         getWindow().setWindowAnimations(0);
 
-        mNewGame = (Button) findViewById(R.id.newGame);
-        mJoinGame = (Button) findViewById(R.id.joinGame);
+        mComputerGame = (Button) findViewById(R.id.computerGame);
+        mHumanGame = (Button) findViewById(R.id.humanGame);
         mHelp = (Button) findViewById(R.id.help);
         mCredits = (Button) findViewById(R.id.credits);
         mExit = (Button) findViewById(R.id.exit);
 
-        mNewGame.setOnClickListener(new View.OnClickListener() {
+        mComputerGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startGame();
+                playComputer();
             }
         });
 
-        mJoinGame.setOnClickListener(new View.OnClickListener() {
+        mHumanGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                joinGame();
+                playHuman();
             }
         });
+
 
         // Get help
         mHelp.setOnClickListener(new View.OnClickListener() {
@@ -63,22 +64,23 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 finish();
-                System.exit(0);
+                android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
     }
 
     // Start a new game
-    private void startGame() {
+    private void playComputer() {
         //setupIntent = new Intent(this, com.android.battlenoleproject.SetupActivity.class);
-        setupIntent = new Intent(this, ChooseGameActivity.class);
+        setupIntent = new Intent(this, SetupActivity.class);
         startActivity(setupIntent);
     }
 
-    private void joinGame() {
-        Intent intent = new Intent(this, JoinGame.class);
+    private void playHuman() {
+        Intent intent = new Intent(this, SetupPlayer1.class);
         startActivity(intent);
     }
+
 
     // Show game info like help and credits
     private void showInfo(int pageNumber) {

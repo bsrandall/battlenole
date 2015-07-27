@@ -34,7 +34,6 @@ public class Game {
     private final static int PLAYER_COUNT = 2;
 
 
-
     public Game( Ship[] playerOneShips, Ship[] playerTwoShips) {
 
         createBoards(playerOneShips, playerTwoShips);
@@ -73,7 +72,7 @@ public class Game {
 
     }
 
-/*
+/* LEAVING HERE JUST IN CASE WE NEED TO PARCEL GAME LATER
     public void writeToParcel ( Parcel out, int flags) {
         out.writeTypedList(boards);
         out.write
@@ -186,7 +185,7 @@ public class Game {
 
         int positionContains = boardGrid.getElementAtBoardPosition(position);
 
-        if (positionContains == FIRE_MISS || position == FIRE_HIT)
+        if (positionContains == FIRE_MISS || positionContains == FIRE_HIT)
             return FIRE_BAD_FIRE;
 
 
@@ -200,7 +199,7 @@ public class Game {
             if (shipAlive == false) {
                 int shipNumber = positionContains/10;
                 this.destroyedShips.get(attackedPlayer).add(shipNumber);
-                positionResult = FIRE_DESTROY_SHIP;
+                positionResult = FIRE_DESTROY_SHIP  * (shipNumber + 1);
 
                 // check the fleet
 
@@ -211,6 +210,7 @@ public class Game {
 
 
         }
+
 
         else { // it did not hit a ship, add board miss and return FIRE_MISS
             markBoardWithMiss(attackedPlayer, position);

@@ -13,16 +13,15 @@ public class Info {
 
         mPages[0] = new Page(
                 "Rules of Engagement",
-                "1. When the game launches, you can either send another player an invitation to " +
-                        "play or accept one that’s been sent to you.\n" +
-                        "2. Start by positioning your ships.  This is accomplished randomly. " +
-                        "You can continue to redeploy your ships until they’re placed where you " +
-                        "want them.  Lock them in and begin play.\n" +
-                        "3. Each player starts out with 5 torpedoes, equivalent to the number of " +
-                        "ships s/he has.\n" +
-                        "4. Each takes a turn firing, hoping to hit his/her opponent’s ships.  " +
-                        "As your ships are sunk, you lose torpedoes.  First player to sink all " +
-                        "of his/her opponent’s ships wins!");
+                "1. When the game launches, you can either choose to play against the computer or " +
+                        "play against an opponent via pass 'n' play.\n" +
+                        "2. Start by positioning your ships.  This is accomplished by clicking " +
+                        "where you want the boats or having them randomly placed. " +
+                        "You can click redeploy to reposition the boats randomly. " +
+                        "Lock them in and begin.\n" +
+                        "3. Each player fires one torpedo per turn. An additional torpedo is" +
+                        " gained when an enemy boat is hit. \n" +
+                        "4.First player to sink all of his/her opponent’s ships wins!");
 
         mPages[1] = new Page(
                 "Team Froyo",

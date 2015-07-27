@@ -172,12 +172,10 @@ public class EnemyBoardFragment extends Fragment {
 
                 enemyBoardGrid.setEnabled(false);
                 mHandler.onFragmentFireInteraction(position);
-
+                enemyBoardGrid.setEnabled(true);
 
             }
         });
-
-
 
 
     }

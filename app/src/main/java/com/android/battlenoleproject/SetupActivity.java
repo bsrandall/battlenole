@@ -229,6 +229,7 @@ public class SetupActivity extends Activity {
             bundle.putParcelableArray("player2Ships", player2Ships);
             intent.putExtras(bundle);
             startActivity(intent);
+            finish();
 
         }
 

@@ -54,6 +54,12 @@ public class PlayComputerActivity extends Activity
 
     private TextView topTV;
 
+    private ImageView submarine;
+    private ImageView smallShip;
+    private ImageView battleship;
+    private ImageView destroyer;
+    private ImageView aircraftCarrier;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +90,12 @@ public class PlayComputerActivity extends Activity
 
 
         topTV = (TextView) findViewById(R.id.play_tv1);
+
+        submarine = (ImageView) findViewById(R.id.submarine);
+        smallShip = (ImageView) findViewById(R.id.small_ship);
+        battleship = (ImageView) findViewById(R.id.battleship);
+        destroyer = (ImageView) findViewById(R.id.destroyer);
+        aircraftCarrier = (ImageView) findViewById(R.id.aircraft_carrier);
 
         playGame();
 
@@ -178,6 +190,9 @@ public class PlayComputerActivity extends Activity
 
     public void playGame() {
 
+            if (playerTurn == -1)
+                return;
+
 
             if (playerTurn == 0) {                          // It is Player's turn show enemy board
                 displayArrangeGameScreen(playerTurn);
@@ -225,13 +240,37 @@ public class PlayComputerActivity extends Activity
                 playerTurn = Game.getOpposite(playerTurn);
             } else if (result == FIRE_HIT) {
                 topTV.setText("You Hit the Enemy! Go Again.");
-            } else if (result == FIRE_DESTROY_SHIP) {
+            } else if (result%FIRE_DESTROY_SHIP == 0) {
                 topTV.setText("You Destroyed an Enemy Ship! Go Again.");
+
+                int shipNumber = result / FIRE_DESTROY_SHIP - 1;
+                switch(shipNumber)
+                {
+                    case 0:
+                        smallShip.setImageDrawable(null);
+                        break;
+                    case 1:
+                        submarine.setImageDrawable(null);
+                        break;
+                    case 2:
+                        battleship.setImageDrawable(null);
+                        break;
+                    case 3:
+                        destroyer.setImageDrawable(null);
+                        break;
+                    case 4:
+                        aircraftCarrier.setImageDrawable(null);
+                        break;
+
+                }
+
+
+
+
             } else if (result == FIRE_DESTROY_FLEET) {
                 topTV.setText("YOU WIN!!!!!!!!!");
                 processWinner(playerTurn);
-            } else if (result == FIRE_BAD_FIRE)
-                topTV.setText("Cell already Selected. Please pick again");
+            }
 
 
             myHandler.postDelayed(changePlayers, 1000);
@@ -278,8 +317,9 @@ public class PlayComputerActivity extends Activity
     }
 
 
-
     public void processWinner(int playerNumber) {
+
+        playerTurn = -1;
 
         Intent endGame = new Intent(this, EndGame.class);
         Boolean won;

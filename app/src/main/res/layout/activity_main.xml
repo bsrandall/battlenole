@@ -19,15 +19,16 @@
         />
 
     <Button
-        android:id="@+id/newGame"
+        android:id="@+id/computerGame"
         style="@style/btnStyleMain"
-        android:text="@string/new_game"
+        android:text="@string/play_computer"
         />
 
     <Button
-        android:id="@+id/joinGame"
+        android:id="@+id/humanGame"
         style="@style/btnStyleMain"
-        android:text="@string/join_game"/>
+        android:text="@string/play_human"/>
+
 
     <Button
         android:id="@+id/help"
